@@ -14,6 +14,64 @@ struct studentInfo
     float GPA;
 };
 
+void displayStudentInfo(int n,struct studentInfo *studentArray){
+    printf("%20s|%15s|%15s|%10s|%10s|%20s|%10s\n","Name","ID","Date of Birth","Linear","Calculus","Basic Programming","GPA");
+    printf("===============================================================================================================\n");
+    for(int i=0;i<n;i++){
+        printf("%20s|%15s|%15s|%10f|%10f|%20f|%10f\n",            
+            studentArray[i].name,studentArray[i].ID,studentArray[i].birthdate,
+            studentArray[i].linearAlgebra,studentArray[i].calculus,studentArray[i].basicProgramming,studentArray[i].GPA);
+    }
+}
+
+void writeToFile(int n,struct studentInfo *studentArray){
+    FILE *filePointer;
+    filePointer = fopen("dataBase.txt","w");
+
+    if(filePointer == NULL){
+      printf("Error!");   
+      exit(1);             
+    }        
+
+    fprintf(filePointer,"%20s|%15s|%15s|%10s|%10s|%20s|%10s\n","Name","ID","Date of Birth","Linear","Calculus","Basic Programming","GPA");
+    fprintf(filePointer,"===============================================================================================================\n");
+    for(int i=0;i<n;i++){
+        fprintf(filePointer,"%20s|%15s|%15s|%10f|%10f|%20f|%10f\n",            
+            studentArray[i].name,studentArray[i].ID,studentArray[i].birthdate,
+            studentArray[i].linearAlgebra,studentArray[i].calculus,studentArray[i].basicProgramming,studentArray[i].GPA);       
+    }
+    fclose(filePointer);
+}
+
+char highestGPA(int n, struct studentInfo *studentArray){
+    float *gpaPointer = (int*) malloc(n*sizeof(int));
+    for (int i=0;i<n;i++){
+        gpaPointer[i] = studentArray[i].GPA;
+    }
+
+    free(gpaPointer);
+    return;
+}
+
+char lowestGPA(int n, struct studentInfo *studentArray){
+    float *gpaPointer = (int*) malloc(n*sizeof(int));
+    for (int i=0;i<n;i++){
+        gpaPointer[i] = studentArray[i].GPA;
+    }
+
+    free(gpaPointer);
+    return;
+}
+
+char highestBP(int n, struct studentInfo *studentArray){
+    float *bpPointer = (int*) malloc(n*sizeof(int));
+    for (int i=0;i<n;i++){
+        bpPointer[i] = studentArray[i].GPA;
+    }
+
+    free(bpPointer);
+    return;
+}
 int main (){
 //get number of student:
     int numberOfStudent,c;
@@ -52,29 +110,11 @@ int main (){
 
         studentArray[i].GPA = (studentArray[i].linearAlgebra + studentArray[i].calculus + studentArray[i].basicProgramming)/3;
     }
+
 //display student info
-    printf("%20s|%15s|%15s|%10s|%10s|%20s|%10s\n","Name","ID","Date of Birth","Linear","Calculus","Basic Programming","GPA");
-    printf("===============================================================================================================\n");
-    for(int i=0;i<numberOfStudent;i++){
-        printf("%20s|%15s|%15s|%10f|%10f|%20f|%10f\n",            
-            studentArray[i].name,studentArray[i].ID,studentArray[i].birthdate,
-            studentArray[i].linearAlgebra,studentArray[i].calculus,studentArray[i].basicProgramming,studentArray[i].GPA);
-    }
+    displayStudentInfo(numberOfStudent,studentArray);
 //write to file
-    FILE *filePointer;
-    filePointer = fopen("dataBase.txt","w");
+    writeToFile(numberOfStudent,studentArray);
 
-    if(filePointer == NULL){
-      printf("Error!");   
-      exit(1);             
-    }        
-
-    fprintf(filePointer,"%20s|%15s|%15s|%10s|%10s|%20s|%10s\n","Name","ID","Date of Birth","Linear","Calculus","Basic Programming","GPA");
-    fprintf(filePointer,"===============================================================================================================\n");
-    for(int i=0;i<numberOfStudent;i++){
-        fprintf(filePointer,"%20s|%15s|%15s|%10f|%10f|%20f|%10f\n",            
-            studentArray[i].name,studentArray[i].ID,studentArray[i].birthdate,
-            studentArray[i].linearAlgebra,studentArray[i].calculus,studentArray[i].basicProgramming,studentArray[i].GPA);       
-    }
     return 0;
 }

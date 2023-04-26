@@ -3,11 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
+#include "findAge.h"
 
 struct studentInfo
 {
     char name[20];
-    char ID[9];
+    char ID[10];
     char birthdate[11];
     float linearAlgebra;
     float calculus;
@@ -52,9 +54,17 @@ void sortGPA(struct studentInfo *studentArray, int start, int end,bool ascending
 //end quick sort gpa
 
 //start bubble sort basic programming score
-void bubbleSort(){
-    
+void bubbleSort(struct studentInfo *studentArray, int n)
+{
+    int i, j;
+    for (i = 0; i < n - 1; i++)
+ 
+        // Last i elements are already in place
+        for (j = 0; j < n - i - 1; j++)
+            if (studentArray[j].basicProgramming > studentArray[j + 1].basicProgramming)
+                swap(&studentArray[j], &studentArray[j + 1]);
 }
+//end bubble sort for basic programming score
 
 void displayStudentInfo(int n,struct studentInfo *studentArray){
     printf("%20s|%15s|%15s|%10s|%10s|%20s|%10s\n","Name","ID","Date of Birth","Linear","Calculus","Basic Programming","GPA");
@@ -95,8 +105,72 @@ void lowestGPA(int n, struct studentInfo *studentArray){
     printf("%s has the lowest GPA\n",studentArray[0].name);
 }
 
-void highestBP(){
-    printf("%s has the highest basic programming score\n");
+void highestBP(int n,struct studentInfo *studentArray){
+    struct studentInfo max = studentArray[0];
+    for (int i=0;i<n;i++){
+        if (max.basicProgramming < studentArray[i].basicProgramming){
+            max = studentArray[i];
+        }
+    }
+    printf("%s has the highest BP point",max.name);
+}
+
+void getLastName(char *fullName){
+    char lastName[10] = "\0";
+    int count = 0;
+    for(int i=0,j=0;i<strlen(fullName);i++){
+        if (fullName[i] == ' '){
+            count++;
+        }
+        if (count == 2){
+            lastName[j++] = fullName[i];
+        }
+    }
+    printf("Student's last name is%s",lastName);
+}
+
+void getOldest(int n, struct studentInfo *studentArray){
+    struct studentInfo max = studentArray[0];
+    for (int i=0;i<n;i++){
+        if (getAge(max.birthdate) < getAge(studentArray[i].birthdate)){
+            max = studentArray[i];
+        }
+    }
+    printf("%s is the oldest",max.name);
+}
+
+void getYoungest(int n, struct studentInfo *studentArray){
+    struct studentInfo min = studentArray[0];
+    for (int i=0;i<n;i++){
+        if (getAge(min.birthdate) > getAge(studentArray[i].birthdate)){
+            min = studentArray[i];
+        }
+    }
+    printf("%s is the oldest",min.name);
+}
+
+struct studentInfo search(struct studentInfo *studentArray,int n){
+    int i=0,c;
+    char target[10],*p;
+    printf("Enter ID of student you want to find: ");
+
+    while ( (c = getchar()) != '\n' && c != EOF ); // remove \n from stream (just to make sure)
+    fgets(target,10,stdin);
+    if ((p=strchr(target, '\n')) != NULL)
+            *p = '\0'; // remove \n from target ID
+
+    for (i=0;i<n;i++){
+        if (strcasecmp(studentArray[i].ID,target)==0){
+            printf("Name: %s\nID: %s\nDate of birth: %s\nLinear Algebra: %f\nCalculus: %f\nBasic Programming: %f\nGPA: %f\n ",
+            studentArray[i].name,studentArray[i].ID,studentArray[i].birthdate,
+            studentArray[i].linearAlgebra,studentArray[i].calculus,studentArray[i].basicProgramming,studentArray[i].GPA);
+            break;
+        }
+    }
+    if (strcasecmp(studentArray[i].ID,target)!=0){
+        printf("There is no matched ID");
+    }
+    return studentArray[i];
 }
 int main (){
 //get number of student:
@@ -114,7 +188,7 @@ int main (){
             *p = '\0'; // remove \n from name
 
         printf("Type in student's ID: ");
-        fgets(studentArray[i].ID,9,stdin);
+        fgets(studentArray[i].ID,10,stdin);
         if ((p=strchr(studentArray[i].ID, '\n')) != NULL)
             *p = '\0'; // remove \n from ID
         while ( (c = getchar()) != '\n' && c != EOF ); // remove \n from stream
@@ -136,10 +210,11 @@ int main (){
 
         studentArray[i].GPA = (studentArray[i].linearAlgebra + studentArray[i].calculus + studentArray[i].basicProgramming)/3;
     }
-    lowestGPA(numberOfStudent,studentArray);
+    // highestBP(numberOfStudent,studentArray);
 //display student info
-    displayStudentInfo(numberOfStudent,studentArray);
+    // displayStudentInfo(numberOfStudent,studentArray);
 //write to file
     // writeToFile(numberOfStudent,studentArray);
+    search(studentArray,numberOfStudent);
     return 0;
 }

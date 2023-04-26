@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 struct studentInfo
 {
@@ -13,6 +14,47 @@ struct studentInfo
     float basicProgramming;
     float GPA;
 };
+
+//swap for student info structures
+void swap(struct studentInfo *a, struct studentInfo *b) {
+    struct studentInfo t = *a;
+    *a = *b;
+    *b = t;
+}
+
+//start quick sort gpa
+int partitionGPA(struct studentInfo *studentArray, int start, int end, bool ascending){
+    float pivot = studentArray[end].GPA;
+    int i = start - 1;
+
+    for (int j = start; j <= end-1; j++){
+        if (studentArray[j].GPA <= pivot && ascending){
+            i++;
+            swap(&studentArray[i],&studentArray[j]);
+        }
+        if (studentArray[j].GPA > pivot && !ascending){
+            i++;
+            swap(&studentArray[i],&studentArray[j]);
+        }
+    }
+    i++;
+    swap(&studentArray[i],&studentArray[end]);
+    return i;
+}
+
+void sortGPA(struct studentInfo *studentArray, int start, int end,bool ascending){
+    if (end <= start) {return;}
+    
+    float pivot = partitionGPA(studentArray,start,end,ascending);
+    sortGPA(studentArray, 0, pivot - 1,ascending);
+    sortGPA(studentArray, pivot + 1, end,ascending);
+}
+//end quick sort gpa
+
+//start bubble sort basic programming score
+void bubbleSort(){
+    
+}
 
 void displayStudentInfo(int n,struct studentInfo *studentArray){
     printf("%20s|%15s|%15s|%10s|%10s|%20s|%10s\n","Name","ID","Date of Birth","Linear","Calculus","Basic Programming","GPA");
@@ -43,34 +85,18 @@ void writeToFile(int n,struct studentInfo *studentArray){
     fclose(filePointer);
 }
 
-char highestGPA(int n, struct studentInfo *studentArray){
-    float *gpaPointer = (int*) malloc(n*sizeof(int));
-    for (int i=0;i<n;i++){
-        gpaPointer[i] = studentArray[i].GPA;
-    }
-
-    free(gpaPointer);
-    return;
+void highestGPA(int n, struct studentInfo *studentArray){
+    sortGPA(studentArray,0,n-1,false);
+    printf("%s has the highest GPA\n",studentArray[0].name);
 }
 
-char lowestGPA(int n, struct studentInfo *studentArray){
-    float *gpaPointer = (int*) malloc(n*sizeof(int));
-    for (int i=0;i<n;i++){
-        gpaPointer[i] = studentArray[i].GPA;
-    }
-
-    free(gpaPointer);
-    return;
+void lowestGPA(int n, struct studentInfo *studentArray){
+    sortGPA(studentArray,0,n-1,true);
+    printf("%s has the lowest GPA\n",studentArray[0].name);
 }
 
-char highestBP(int n, struct studentInfo *studentArray){
-    float *bpPointer = (int*) malloc(n*sizeof(int));
-    for (int i=0;i<n;i++){
-        bpPointer[i] = studentArray[i].GPA;
-    }
-
-    free(bpPointer);
-    return;
+void highestBP(){
+    printf("%s has the highest basic programming score\n");
 }
 int main (){
 //get number of student:
@@ -110,11 +136,10 @@ int main (){
 
         studentArray[i].GPA = (studentArray[i].linearAlgebra + studentArray[i].calculus + studentArray[i].basicProgramming)/3;
     }
-
+    lowestGPA(numberOfStudent,studentArray);
 //display student info
     displayStudentInfo(numberOfStudent,studentArray);
 //write to file
-    writeToFile(numberOfStudent,studentArray);
-
+    // writeToFile(numberOfStudent,studentArray);
     return 0;
 }

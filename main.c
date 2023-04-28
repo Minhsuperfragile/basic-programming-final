@@ -25,16 +25,19 @@ void swap(struct studentInfo *a, struct studentInfo *b) {
 } // this function is made for later sort function
 
 //start quick sort gpa
+/* This function takes last element as pivot, places the pivot element at its correct position in sorted array, 
+and places all smaller (smaller than pivot) to left of pivot and all greater elements to right of pivot */
 int partitionGPA(struct studentInfo *studentArray, int start, int end, bool ascending){
     float pivot = studentArray[end].GPA;
-    int i = start - 1;
+    int i = start - 1; // Index of smaller element and indicates the 
+    // right position of pivot found so far
 
-    for (int j = start; j <= end-1; j++){
-        if (studentArray[j].GPA <= pivot && ascending){
+    for (int j = start; j <= end-1; j++){ 
+        if (studentArray[j].GPA <= pivot && ascending){ // If current element is smaller than the pivot
             i++;
             swap(&studentArray[i],&studentArray[j]);
         }
-        if (studentArray[j].GPA > pivot && !ascending){
+        if (studentArray[j].GPA > pivot && !ascending){ // If current element is greater than the pivot
             i++;
             swap(&studentArray[i],&studentArray[j]);
         }
@@ -48,8 +51,8 @@ void quickSortGPA(struct studentInfo *studentArray, int start, int end,bool asce
     if (end <= start) {return;}
     
     float pivot = partitionGPA(studentArray,start,end,ascending);
-    quickSortGPA(studentArray, 0, pivot - 1,ascending);
-    quickSortGPA(studentArray, pivot + 1, end,ascending);
+    quickSortGPA(studentArray, 0, pivot - 1,ascending); // sort the left side of pivot
+    quickSortGPA(studentArray, pivot + 1, end,ascending); // sort the right side of pivot
 }
 //end quick sort gpa
 
@@ -70,7 +73,7 @@ void displayStudentInfo(int n,struct studentInfo *studentArray){
     printf("%20s|%15s|%15s|%10s|%10s|%20s|%10s\n","Name","ID","Date of Birth","Linear","Calculus","Basic Programming","GPA");
     printf("===============================================================================================================\n");
     for(int i=0;i<n;i++){
-        printf("%20s|%15s|%15s|%10f|%10f|%20f|%10f\n",            
+        printf("%20s|%15s|%15s|%10f|%10f|%20f|%10f\n", //20s is space pre-defined for table            
             studentArray[i].name,studentArray[i].ID,studentArray[i].birthdate,
             studentArray[i].linearAlgebra,studentArray[i].calculus,studentArray[i].basicProgramming,studentArray[i].GPA);
     }
@@ -78,13 +81,13 @@ void displayStudentInfo(int n,struct studentInfo *studentArray){
 
 void writeToFile(int n,struct studentInfo *studentArray){
     FILE *filePointer;
-    filePointer = fopen("dataBase.txt","w");
+    filePointer = fopen("dataBase.txt","w"); //open file
 
     if(filePointer == NULL){
       printf("Error!");   
       exit(1);             
     }        
-
+// similar to display function above, just use fprintf to print to file
     fprintf(filePointer,"%20s|%15s|%15s|%10s|%10s|%20s|%10s\n","Name","ID","Date of Birth","Linear","Calculus","Basic Programming","GPA");
     fprintf(filePointer,"===============================================================================================================\n");
     for(int i=0;i<n;i++){
@@ -92,7 +95,7 @@ void writeToFile(int n,struct studentInfo *studentArray){
             studentArray[i].name,studentArray[i].ID,studentArray[i].birthdate,
             studentArray[i].linearAlgebra,studentArray[i].calculus,studentArray[i].basicProgramming,studentArray[i].GPA);       
     }
-    fclose(filePointer);
+    fclose(filePointer); // close file
 }
 
 void highestGPA(int n, struct studentInfo *studentArray){
@@ -106,13 +109,13 @@ void lowestGPA(int n, struct studentInfo *studentArray){
 }
 
 void highestBP(int n,struct studentInfo *studentArray){
-    struct studentInfo max = studentArray[0];
+    struct studentInfo max = studentArray[0]; // set max to first student
     for (int i=0;i<n;i++){
-        if (max.basicProgramming < studentArray[i].basicProgramming){
-            max = studentArray[i];
+        if (max.basicProgramming < studentArray[i].basicProgramming){ // if current student has higher grade than max
+            max = studentArray[i]; // set max to current student
         }
     }
-    printf("%s has the highest BP point",max.name);
+    printf("%s has the highest BP point",max.name); // we actually able to access other information in this way
 }
 
 char *getLastName(char *fullName){
@@ -134,7 +137,7 @@ char *getLastName(char *fullName){
     return lastName;
 }
 
-void getOldest(int n, struct studentInfo *studentArray){
+void getOldest(int n, struct studentInfo *studentArray){ //similar to above function
     struct studentInfo max = studentArray[0];
     for (int i=0;i<n;i++){
         if (getAge(max.birthdate) < getAge(studentArray[i].birthdate)){
@@ -161,9 +164,10 @@ struct studentInfo search(struct studentInfo *studentArray,int n){
     printf("Enter ID of student you want to find: ");
     getchar();
     fgets(target,10,stdin);
+    target[strcspn(target,"\n")] = '\0'; //remove trailing newline from target
 
-    for (i=0;i<n;i++){
-        if (strcasecmp(studentArray[i].ID,target)==0){
+    for (i=0;i<n;i++){ //search all elements to find target
+        if (strcasecmp(studentArray[i].ID,target)==0){// compare 2 string without case-sensitve, if equal -> print student
             printf("Name: %s\nID: %s\nDate of birth: %s\nLinear Algebra: %f\nCalculus: %f\nBasic Programming: %f\nGPA: %f\n ",
             studentArray[i].name,studentArray[i].ID,studentArray[i].birthdate,
             studentArray[i].linearAlgebra,studentArray[i].calculus,studentArray[i].basicProgramming,studentArray[i].GPA);

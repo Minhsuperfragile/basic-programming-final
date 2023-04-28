@@ -6,11 +6,11 @@
 #include <ctype.h>
 #include "findAge.h"
 
-struct studentInfo
+struct studentInfo //initiate studentInfo structure
 {
-    char name[20];
-    char ID[10];
-    char birthdate[11];
+    char name[20]; // name of student, max 19 char (last space for null char)
+    char ID[10]; // ID of student, max 9 char (last space for null char)
+    char birthdate[11]; // birthdate in format DD/MM/YYYY (last space for null char)
     float linearAlgebra;
     float calculus;
     float basicProgramming;
@@ -19,10 +19,10 @@ struct studentInfo
 
 //swap for student info structures
 void swap(struct studentInfo *a, struct studentInfo *b) {
-    struct studentInfo t = *a;
+    struct studentInfo t = *a; //temporary var
     *a = *b;
     *b = t;
-}
+} // this function is made for later sort function
 
 //start quick sort gpa
 int partitionGPA(struct studentInfo *studentArray, int start, int end, bool ascending){
@@ -44,12 +44,12 @@ int partitionGPA(struct studentInfo *studentArray, int start, int end, bool asce
     return i;
 }
 
-void sortGPA(struct studentInfo *studentArray, int start, int end,bool ascending){
+void quickSortGPA(struct studentInfo *studentArray, int start, int end,bool ascending){
     if (end <= start) {return;}
     
     float pivot = partitionGPA(studentArray,start,end,ascending);
-    sortGPA(studentArray, 0, pivot - 1,ascending);
-    sortGPA(studentArray, pivot + 1, end,ascending);
+    quickSortGPA(studentArray, 0, pivot - 1,ascending);
+    quickSortGPA(studentArray, pivot + 1, end,ascending);
 }
 //end quick sort gpa
 
@@ -96,12 +96,12 @@ void writeToFile(int n,struct studentInfo *studentArray){
 }
 
 void highestGPA(int n, struct studentInfo *studentArray){
-    sortGPA(studentArray,0,n-1,false);
+    quickSortGPA(studentArray,0,n-1,false);
     printf("%s has the highest GPA\n",studentArray[0].name);
 }
 
 void lowestGPA(int n, struct studentInfo *studentArray){
-    sortGPA(studentArray,0,n-1,true);
+    quickSortGPA(studentArray,0,n-1,true);
     printf("%s has the lowest GPA\n",studentArray[0].name);
 }
 
@@ -150,14 +150,12 @@ void getYoungest(int n, struct studentInfo *studentArray){
 }
 
 struct studentInfo search(struct studentInfo *studentArray,int n){
-    int i=0,c;
-    char target[10],*p;
-    printf("Enter ID of student you want to find: ");
+    int i=0;
+    char target[10];
 
-    while ( (c = getchar()) != '\n' && c != EOF ); // remove \n from stream (just to make sure)
+    printf("Enter ID of student you want to find: ");
+    getchar();
     fgets(target,10,stdin);
-    if ((p=strchr(target, '\n')) != NULL)
-            *p = '\0'; // remove \n from target ID
 
     for (i=0;i<n;i++){
         if (strcasecmp(studentArray[i].ID,target)==0){
@@ -174,31 +172,27 @@ struct studentInfo search(struct studentInfo *studentArray,int n){
 }
 int main (){
 //get number of student:
-    int numberOfStudent,c;
+    int numberOfStudent;
     printf("enter number of student: ");
     scanf("%d",&numberOfStudent);
 //get student info:
-    char *p;
     struct studentInfo studentArray[numberOfStudent];
     for (int i=0;i<numberOfStudent;i++){
-        while ( (c = getchar()) != '\n' && c != EOF ); // remove \n from stream
+        
         printf("Type in student's name: ");
+        getchar();
         fgets(studentArray[i].name,20,stdin);
-        if ((p=strchr(studentArray[i].name, '\n')) != NULL)
-            *p = '\0'; // remove \n from name
+        studentArray[i].name[strcspn(studentArray[i].name,"\n")] = '\0';
 
         printf("Type in student's ID: ");
         fgets(studentArray[i].ID,10,stdin);
-        if ((p=strchr(studentArray[i].ID, '\n')) != NULL)
-            *p = '\0'; // remove \n from ID
-        while ( (c = getchar()) != '\n' && c != EOF ); // remove \n from stream
+        getchar();
+        studentArray[i].ID[strcspn(studentArray[i].ID,"\n")] = '\0';
 
         printf("Type in student's birthdate: ");
         fgets(studentArray[i].birthdate,11,stdin);
-        if ((p=strchr(studentArray[i].birthdate, '\n')) != NULL)
-            *p = '\0'; // remove \n from birthdate
-        while ( (c = getchar()) != '\n' && c != EOF ); // remove \n from stream
-        
+        studentArray[i].birthdate[strcspn(studentArray[i].birthdate,"\n")] = '\0';
+
         printf("Type in student's linear grade: ");
         scanf("%f", &studentArray[i].linearAlgebra);
 

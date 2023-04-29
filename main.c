@@ -120,20 +120,12 @@ void highestBP(int n,struct studentInfo *studentArray){
 
 char *getLastName(char *fullName){
     char *lastName = (char*) malloc(10*sizeof(char));
-    for(int i=0,j=0;i<strlen(fullName);i++){
-        if (fullName[i] == ' '){ // check for existance of space character
-            for (int k=0;k<j;k++){
-                lastName[k] = '\0';
-            } // reset lastName to null
-            j = 0; // reset j
-        } else{
-            lastName[j++] = fullName[i]; // assign lastName
-        }
-        if (fullName[i] == '\0'){
-            break;
-        }
-    }
-    printf("Student's last name is %s",lastName);
+    char *lastSpace = strrchr(fullName, ' ');
+    if (lastSpace != NULL) {
+        strcpy(lastName, lastSpace + 1);
+        free(lastSpace);
+    }        
+    printf("student's last name is %s", lastName);
     return lastName;
 }
 
@@ -219,7 +211,7 @@ int main (){
 //write to file
     // writeToFile(numberOfStudent,studentArray);
     // search(studentArray,numberOfStudent);
-    for (int i=0; i<numberOfStudent;i++){
+    for(int i=0; i<numberOfStudent;i++){
         getLastName(studentArray[i].name);
     }
     return 0;
